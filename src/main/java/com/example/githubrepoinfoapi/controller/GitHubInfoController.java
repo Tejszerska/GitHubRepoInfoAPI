@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/ghinfo")
 @RequiredArgsConstructor
 public class GitHubInfoController {
-    private GitHubService gitHubService;
+    private final GitHubService gitHubService;
 
     @GetMapping("/{username}")
     public List<RepositoryInfo> getRepositories(@PathVariable String username, @RequestHeader(HttpHeaders.ACCEPT) String acceptHeader) {

@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class GitHubRepoInfoApiApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(GitHubRepoInfoApiApplication.class, args);
     }
-
 }
