@@ -18,7 +18,9 @@ public class GitHubInfoController {
 
     @GetMapping("/{username}")
     public List<RepositoryInfo> getRepositories(@PathVariable String username, @RequestHeader(HttpHeaders.ACCEPT) String acceptHeader) {
-
+        if (!"application/json".equals(acceptHeader)) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Accept header must be 'application/json'");
+        }
         return gitHubService.getRepositories(username);
     }
 }
