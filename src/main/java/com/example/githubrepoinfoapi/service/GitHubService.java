@@ -5,6 +5,7 @@ import com.example.githubrepoinfoapi.model.RepositoryInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,9 +22,16 @@ public class GitHubService {
         String userUrl = GITHUB_API_URL + "/users/" + username;
         ResponseEntity<Map> userResponse = restTemplate.getForEntity(userUrl, Map.class);
 
-        if (userResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        try {
+            userResponse = restTemplate.getForEntity(userUrl, Map.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            } else {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching user");
+            }
         }
+
 
         String reposUrl = GITHUB_API_URL + "/users/" + username + "/repos";
         ResponseEntity<List> repResponse = restTemplate.getForEntity(reposUrl, List.class);
