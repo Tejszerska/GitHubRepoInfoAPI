@@ -41,9 +41,7 @@ public class GitHubInfoControllerTest {
 
     @Test
     public void testGetRepositories_InvalidAcceptHeader() {
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            gitHubInfoController.getRepositories("user1", "text/plain");
-        });
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> gitHubInfoController.getRepositories("user1", "text/plain"));
 
         assertEquals(HttpStatus.NOT_ACCEPTABLE, exception.getStatusCode());
         assertEquals("Accept header must be 'application/json'", exception.getReason());
