@@ -1,48 +1,48 @@
 # GitHubRepoInfoAPI
 
-GitHubRepoInfoAPI to narzędzie do pobierania listy repozytoriów użytkownika GitHub, które nie są forkami, oraz uzyskiwania informacji o ich gałęziach i najnowszych commitach.
+GitHubRepoInfoAPI is a tool for fetching a list of a GitHub user's repositories that are not forks, and obtaining information about their branches and latest commits.
 
-## Funkcjonalności
+## Features
 
-- Pobieranie listy repozytoriów użytkownika GitHub, które nie są forkami.
-- Wyświetlanie szczegółowych informacji o gałęziach każdego repozytorium.
-- Wyświetlanie najnowszych commitów w każdej z gałęzi repozytorium.
+- Fetching a list of a GitHub user's repositories that are not forks.
+- Displaying detailed information about the branches of each repository.
+- Displaying the latest commits in each branch of the repository.
 
-## Wymagania
+## Requirements
 
-- Java 21 
+- Java 21
 - Maven
 
-## Instalacja
+## Installation
 
-1. Sklonuj repozytorium:
+1. Clone the repository:
     git clone https://github.com/Tejszerska/GitHubRepoInfoAPI.git
 
-2. Przejdź do katalogu projektu:
+2. Navigate to the project directory:
     cd GitHubRepoInfoAPI
 
-3. Zbuduj projekt przy użyciu Mavena:
+3. Build the project using Maven:
     mvn clean install
 
-## Użycie
+## Usage
 
-1. Uruchom aplikację:
+1. Run the application:
     java -jar target/GitHubRepoInfoAPI-1.0-SNAPSHOT.jar
 
 ## Endpoint
 
 - **URL**: `/ghinfo/{username}`
-- **Metoda**: `GET`
-- **Parametry**:
-  - `Authorization` (string) - Token GitHub w formacie `ghp_xxx...`
+- **Method**: `GET`
+- **Parameters**:
+  - `Authorization` (string) - GitHub token in the format `ghp_xxx...`
 
-**Przykład**:
+**Example**:
 GET ghinfo/tejszerska?YOUR_GITHUB_TOKEN
 
-## Autor
+## Author
 
 - [Tejszerska](https://github.com/Tejszerska)
 
-## Licencja
+## License
 
-Ten projekt jest licencjonowany na warunkach licencji Unlicense.
+This project is licensed under the terms of the Unlicense.
