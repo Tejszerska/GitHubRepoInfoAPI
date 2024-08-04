@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 @RequiredArgsConstructor
 @Service
 public class GitHubService {
@@ -24,9 +23,9 @@ public class GitHubService {
     public List<RepositoryInfo> getRepositories(String username) {
         String userUrl = GITHUB_API_URL + "/users/" + username;
 
-        ResponseEntity<Map<String, Object>> userResponse;
+        ResponseEntity<Map> userResponse;
         try {
-            userResponse = restTemplate.getForEntity(userUrl, (Class<Map<String, Object>>) (Class<?>) Map.class);
+            userResponse = restTemplate.getForEntity(userUrl, Map.class);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -36,9 +35,9 @@ public class GitHubService {
         }
 
         String reposUrl = GITHUB_API_URL + "/users/" + username + "/repos";
-        ResponseEntity<List<Map<String, Object>>> repResponse;
+        ResponseEntity<List> repResponse;
         try {
-            repResponse = restTemplate.getForEntity(reposUrl, (Class<List<Map<String, Object>>>) (Class<?>) List.class);
+            repResponse = restTemplate.getForEntity(reposUrl, List.class);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error fetching repositories");
@@ -58,17 +57,17 @@ public class GitHubService {
             for (Map<String, Object> rep : repositories) {
                 if (Boolean.FALSE.equals(rep.get("fork"))) {
                     String branchesUrl = rep.get("branches_url").toString().replace("{/branch}", "");
-                    ResponseEntity<List<Map<String, Object>>> branchesResponse = restTemplate.getForEntity(branchesUrl, (Class<List<Map<String, Object>>>) (Class<?>) List.class);
+                    ResponseEntity<List> branchesResponse = restTemplate.getForEntity(branchesUrl, List.class);
                     List<Map<String, Object>> branches = branchesResponse.getBody();
                     List<Branch> branchList = new ArrayList<>();
                     if (branches != null) {
                         for (Map<String, Object> branch : branches) {
                             String branchName = branch.get("name").toString();
-                            String lastCommitSha = ((Map<String, Object>) branch.get("commit")).get("sha").toString();
+                            String lastCommitSha = ((Map) branch.get("commit")).get("sha").toString();
                             branchList.add(new Branch(branchName, lastCommitSha));
                         }
                     }
-                    RepositoryInfo repoInfo = new RepositoryInfo(rep.get("name").toString(), ((Map<String, Object>) rep.get("owner")).get("login").toString(), branchList);
+                    RepositoryInfo repoInfo = new RepositoryInfo(rep.get("name").toString(), ((Map) rep.get("owner")).get("login").toString(), branchList);
                     result.add(repoInfo);
                 }
             }
