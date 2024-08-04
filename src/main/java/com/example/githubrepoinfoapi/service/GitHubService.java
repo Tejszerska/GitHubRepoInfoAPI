@@ -2,9 +2,7 @@ package com.example.githubrepoinfoapi.service;
 
 import com.example.githubrepoinfoapi.model.Branch;
 import com.example.githubrepoinfoapi.model.RepositoryInfo;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+//@TODO Change raw types
 @RequiredArgsConstructor
 @Service
 public class GitHubService {
@@ -27,7 +26,7 @@ public class GitHubService {
 
         ResponseEntity<Map> userResponse;
         try {
-            userResponse = restTemplate.getForEntity(userUrl, Map.class); // Teraz jest w bloku try-catch
+            userResponse = restTemplate.getForEntity(userUrl, Map.class);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
