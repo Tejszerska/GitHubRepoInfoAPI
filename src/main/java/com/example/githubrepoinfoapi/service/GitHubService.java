@@ -2,6 +2,9 @@ package com.example.githubrepoinfoapi.service;
 
 import com.example.githubrepoinfoapi.model.Branch;
 import com.example.githubrepoinfoapi.model.RepositoryInfo;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,18 +15,19 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+@RequiredArgsConstructor
 @Service
 public class GitHubService {
-    private final RestTemplate restTemplate = new RestTemplate();
+
+    private final RestTemplate restTemplate;
     private static final String GITHUB_API_URL = "https://api.github.com";
 
     public List<RepositoryInfo> getRepositories(String username) {
         String userUrl = GITHUB_API_URL + "/users/" + username;
-        ResponseEntity<Map> userResponse = restTemplate.getForEntity(userUrl, Map.class);
 
+        ResponseEntity<Map> userResponse;
         try {
-            userResponse = restTemplate.getForEntity(userUrl, Map.class);
+            userResponse = restTemplate.getForEntity(userUrl, Map.class); // Teraz jest w bloku try-catch
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -32,9 +36,17 @@ public class GitHubService {
             }
         }
 
-
         String reposUrl = GITHUB_API_URL + "/users/" + username + "/repos";
-        ResponseEntity<List> repResponse = restTemplate.getForEntity(reposUrl, List.class);
+        ResponseEntity<List> repResponse;
+        try {
+            repResponse = restTemplate.getForEntity(reposUrl, List.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error fetching repositories");
+            } else {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching repositories");
+            }
+        }
 
         if (repResponse.getStatusCode() != HttpStatus.OK) {
             throw new ResponseStatusException(repResponse.getStatusCode(), "Error fetching repositories");
@@ -45,7 +57,7 @@ public class GitHubService {
 
         if (repositories != null) {
             for (Map<String, Object> rep : repositories) {
-                if (Boolean.FALSE.equals(rep.get("fork"))) { // Poprawienie sprawdzenia na false
+                if (Boolean.FALSE.equals(rep.get("fork"))) {
                     String branchesUrl = rep.get("branches_url").toString().replace("{/branch}", "");
                     ResponseEntity<List> branchesResponse = restTemplate.getForEntity(branchesUrl, List.class);
                     List<Map<String, Object>> branches = branchesResponse.getBody();
@@ -64,4 +76,5 @@ public class GitHubService {
         }
         return result;
     }
+
 }
