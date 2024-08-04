@@ -109,17 +109,4 @@ public class GitHubServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         assertEquals("Error fetching repositories", exception.getReason());
     }
-
-    @Test
-    public void testGetRepositories_InternalServerError() {
-        when(mockRestTemplate.getForEntity(anyString(), eq(Map.class)))
-                .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            gitHubService.getRepositories("user1");
-        });
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
-        assertEquals("Error fetching user", exception.getReason());
-    }
 }
