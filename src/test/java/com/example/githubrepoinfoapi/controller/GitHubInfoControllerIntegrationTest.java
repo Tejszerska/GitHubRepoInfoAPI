@@ -50,4 +50,22 @@ public class GitHubInfoControllerIntegrationTest {
                         .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN_VALUE))
                 .andExpect(status().isNotAcceptable());
     }
+
+    @Test
+    public void testGetRepositories_UserNotFound() throws Exception {
+        when(gitHubService.getRepositories(anyString())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        mockMvc.perform(get("/ghinfo/nonexistentuser")
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetRepositories_InternalServerError() throws Exception {
+        when(gitHubService.getRepositories(anyString())).thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching repositories"));
+
+        mockMvc.perform(get("/ghinfo/user1")
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isInternalServerError());
+    }
 }
