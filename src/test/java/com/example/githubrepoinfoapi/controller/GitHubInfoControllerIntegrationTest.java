@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,11 +30,9 @@ public class GitHubInfoControllerIntegrationTest {
 
     @Test
     public void testGetRepositories_Success() throws Exception {
-        // Mock service response
         List<RepositoryInfo> mockRepositories = Collections.singletonList(new RepositoryInfo("repo1", "user1", Collections.emptyList()));
         when(gitHubService.getRepositories(anyString())).thenReturn(mockRepositories);
 
-        // Call the controller method
         mockMvc.perform(get("/ghinfo/user1")
                         .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -45,7 +41,6 @@ public class GitHubInfoControllerIntegrationTest {
 
     @Test
     public void testGetRepositories_InvalidAcceptHeader() throws Exception {
-        // Call the controller method with invalid Accept header
         mockMvc.perform(get("/ghinfo/user1")
                         .header(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN_VALUE))
                 .andExpect(status().isNotAcceptable());

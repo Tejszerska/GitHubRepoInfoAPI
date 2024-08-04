@@ -31,12 +31,10 @@ public class GitHubServiceTest {
 
     @Test
     public void testGetRepositories_Success() {
-        // Mock user response
         Map<String, Object> mockUser = new HashMap<>();
         ResponseEntity<Map> userResponse = new ResponseEntity<>(mockUser, HttpStatus.OK);
         when(mockRestTemplate.getForEntity(anyString(), eq(Map.class))).thenReturn(userResponse);
 
-        // Mock repositories response
         List<Map<String, Object>> mockRepos = new ArrayList<>();
         Map<String, Object> mockRepo = new HashMap<>();
         mockRepo.put("name", "repo1");
@@ -47,7 +45,6 @@ public class GitHubServiceTest {
         ResponseEntity<List> reposResponse = new ResponseEntity<>(mockRepos, HttpStatus.OK);
         when(mockRestTemplate.getForEntity(contains("/repos"), eq(List.class))).thenReturn(reposResponse);
 
-        // Mock branches response
         List<Map<String, Object>> mockBranches = new ArrayList<>();
         Map<String, Object> mockBranch = new HashMap<>();
         mockBranch.put("name", "main");
@@ -56,10 +53,8 @@ public class GitHubServiceTest {
         ResponseEntity<List> branchesResponse = new ResponseEntity<>(mockBranches, HttpStatus.OK);
         when(mockRestTemplate.getForEntity(contains("/branches"), eq(List.class))).thenReturn(branchesResponse);
 
-        // Call the method
         List<RepositoryInfo> repositories = gitHubService.getRepositories("user1");
 
-        // Verify the results
         assertNotNull(repositories);
         assertEquals(1, repositories.size());
         assertEquals("repo1", repositories.get(0).getRepositoryName());
@@ -71,10 +66,8 @@ public class GitHubServiceTest {
 
     @Test
     public void testGetRepositories_UserNotFound() {
-        // Mock user not found response
         when(mockRestTemplate.getForEntity(anyString(), eq(Map.class))).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        // Verify the exception
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> gitHubService.getRepositories("nonexistentuser"));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
@@ -83,10 +76,8 @@ public class GitHubServiceTest {
 
     @Test
     public void testGetRepositories_ApiError() {
-        // Mock API error response
         when(mockRestTemplate.getForEntity(anyString(), eq(Map.class))).thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        // Verify the exception
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> gitHubService.getRepositories("user1"));
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
@@ -95,15 +86,12 @@ public class GitHubServiceTest {
 
     @Test
     public void testGetRepositories_RepositoriesNotFound() {
-        // Mock user response
         Map<String, Object> mockUser = new HashMap<>();
         ResponseEntity<Map> userResponse = new ResponseEntity<>(mockUser, HttpStatus.OK);
         when(mockRestTemplate.getForEntity(anyString(), eq(Map.class))).thenReturn(userResponse);
 
-        // Mock repositories not found response
         when(mockRestTemplate.getForEntity(contains("/repos"), eq(List.class))).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        // Verify the exception
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> gitHubService.getRepositories("user1"));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
